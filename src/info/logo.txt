@@ -1,0 +1,18 @@
+                                                            
+=============================================================                                                            
+     .....   .   .   ....    .         . 
+     .#####  .#  .#  .####   .##.     . #
+     .#      .#  .#  .#  .#  .#  #   . # #
+     .#...   .#  .#  .#.. #  .#  .#  .#...#
+      #####  .#  .#  .####   .#  .#  .#####
+          #  .#  .#  .#  #   .# . #  .#  .#
+     .....#  .#...#  .#  .#  .#. #   .#  .#
+      #####   #####   #   #   ###     #   #
+                                                            
+=============================================================
+Surda stands for "Schedule ur day ahead", you can upload your
+schedule with it by typing simple commands, and it's easy to
+check them any time you want in readable format.
+                                                            
+type "help" for help.
+

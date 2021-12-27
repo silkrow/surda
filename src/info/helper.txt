@@ -1,0 +1,28 @@
+
+======================================================================
+This is the surda app.
+
+Consider the dollar sign($) as the shell symbol in your surda shell, 
+things in brackets [ ] are considered as optional arguments of input.
+
+surda can run the following types of commands:
+
+1. $ help
+		Presents the helper function that describes what
+		sorts of commands are available and what are their
+		functionalities.
+2. $ exit
+		Exit the surda program.
+3. $ add time1 time2 [day]
+		Prepare to add a plan to the time interval between
+		time1 and time2, they should both in 24h standard,
+		with the digit of second being multiple of 5. 
+		For example,      add 0:00 2:05
+4. $ display 
+		Display the schedule table of this week.
+5. $ record [i]
+		Record the week schedule right now and name it as
+		the #i module, which can be used for future imports.
+6. $ import [i] [flag]
+		Import the #i module stored, flag can be "a" for 
+		append or "w" for write.
