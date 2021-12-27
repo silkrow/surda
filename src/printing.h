@@ -14,7 +14,6 @@
 #define SOLINE "------------------------"
 #define LINE  "- - - - - - - - - - - - "
 #define HYPH "-"
-#define 
 
 /***********************************PRED**************************************/
 char** set_empty_table();
@@ -31,12 +30,9 @@ char** set_empty_table();
 
 * Description:      This is a set up function.
 *****************************************************************************/
-char** set_empty_table(){
+/*char** set_empty_table(){
 	char** table;
 	if (NULL == (table = malloc(sizeof(table)))) return NULL;
 	if (NULL == (*table = malloc(sizeof(char))))
-
-
-
-}
+}*/
 
