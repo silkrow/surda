@@ -1,2 +1,2 @@
 # surda
-Schedule ur day ahead
+Schedule ur day ahead.
