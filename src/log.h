@@ -25,6 +25,8 @@
 
 /***********************************PRED**************************************/
 typedef struct Log{
+	char* name;
+	FILE* logf;
 } Log;
 
 /* The Table structure should contain a file of txt form to display the table,
@@ -41,7 +43,11 @@ typedef struct Table{
 
 } Table;
 
+int count_args (char** args);
 int add_plan (char** args);
+
+
+
 int del_plan (int start, int date, Log* log);
 void show_table (Table* table, Log* log);
 void log_update (Log* log);
@@ -51,15 +57,54 @@ int mod_load (Table*, Table*);
 /***********************************IMPL**************************************/
 
 /******************************************************************************
+* Function:         int count_args
+* Arguments:		char** args
+* Return:           The number of valid arguments passed in.
+* Error:            none
+
+* Description:      
+*****************************************************************************/
+int count_args(char** args){
+	int n = 0;
+
+	/* Start testing from args[1], assuming args[0] is not interested. */
+	while (args[++n] != NULL);
+
+	return n;
+}
+
+/******************************************************************************
 * Function:         int add_plan 
 * Arguments:		char** args
-* Return:          	Whether the adding is legal. 
+* Return:          	1 for legal adding, -1 for illegal adding. 
 * Error:            none
 
 * Description:      Reads in information and add plan to the log file.
 *****************************************************************************/
 int add_plan (char** args){
 	
+	switch (count_args(args)){
+		/* time1 time2 string*/
+		case 3:
+			return 1;
+
+		/* time1 time2 string day*/
+		case 4:
+			return 1;
+
+		default:
+			printf("surda: Invalid syntax for add!\n");
+			printf("       Use add time1 time2 plan [day]\n"
+		   			"       or  type \"help\" for help.\n");
+
+
+			return -1;
+	}
+	printf("surda: Invalid syntax for add!\n");
+	printf("       Use add time1 time2 plan [day]\n"
+		   "       or  type \"help\" for help.\n");
+
+	return -1;
 }
 
 /******************************************************************************
