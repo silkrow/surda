@@ -187,15 +187,15 @@ int lsh_launch(char **args)
   List of builtin commands, followed by their corresponding functions.
  */
 char *builtin_str[] = {
-  "cd",
-  "help",
-  "exit"
+  	"cd",
+  	"help",
+  	"exit"
 };
 
 int (*builtin_func[]) (char **) = {
-  &lsh_cd,
-  &lsh_help,
-  &lsh_exit
+  	&lsh_cd,
+	&lsh_help,
+	&lsh_exit
 };
 
 int lsh_num_builtins() {
@@ -246,32 +246,45 @@ int lsh_exit(char **args)
   	return 0;
 }
 
-
 /*
-int lsh_display(char **args){
-	if (args[1] == NULL){
+ * List of the functions from log.h. 
+ */
 
-	}
-	else {
-		
-	}
+char *log_str[] = {
+  	"add",
+	"a"
+};
+
+int (*log_func[]) (char **) = {
+  	&add_plan,
+  	&add_plan
+};
+
+int log_func_num() {
+  	return sizeof(log_str) / sizeof(char *);
 }
-*/
 
+
+
+/******************************************************************************/
 int lsh_execute(char **args)
 {
-	int i;
 
 	if (args[0] == NULL) {
     	// An empty command was entered.
     	return 1;
   	}
 
-	for (i = 0; i < lsh_num_builtins(); i++) {
+	for (int i = 0; i < lsh_num_builtins(); i++) {
     	if (strcmp(args[0], builtin_str[i]) == 0) {
 		return (*builtin_func[i])(args);
     	}
   	}
+
+	for (int i = 0; i < log_func_num(); ++i){
+		if (strcmp(args[0], log_str[i]) == 0)
+			return (*log_func[i])(args);
+	}
 
   	return lsh_launch(args);
 }

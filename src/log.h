@@ -41,7 +41,7 @@ typedef struct Table{
 
 } Table;
 
-int add_plan (int start, int end, int date, const char* splan, Log* log);
+int add_plan (char** args);
 int del_plan (int start, int date, Log* log);
 void show_table (Table* table, Log* log);
 void log_update (Log* log);
@@ -52,13 +52,13 @@ int mod_load (Table*, Table*);
 
 /******************************************************************************
 * Function:         int add_plan 
-* Arguments:		int start, int end, int date, const char* splan, Log* log
+* Arguments:		char** args
 * Return:          	Whether the adding is legal. 
 * Error:            none
 
 * Description:      Reads in information and add plan to the log file.
 *****************************************************************************/
-int add_plan (int start, int end, int date, const char* splan, Log* log){
+int add_plan (char** args){
 	
 }
 
