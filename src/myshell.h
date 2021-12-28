@@ -52,11 +52,25 @@ void lsh_loop(void){
 	char **args;
 	int status;
 
+	/* Preprocessing, set the log file to this week! */
+	
+
 	do{
 		printf("surda:> ");
 		line = lsh_read_line();
 		args = lsh_split_line(line);
-		status = lsh_execute(args);
+		/* If status is 1, then keep on asking for new commands,
+		 * if status is 2, read the text of plan. */
+		switch (status){
+			case 1:
+				status = lsh_execute(args);
+				break;
+			case 2:
+				status = add_plan_str(args, log);
+				break;
+			default:
+				break;
+		}
 
 		free(line);
 		free(args);

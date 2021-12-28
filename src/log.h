@@ -46,7 +46,7 @@ typedef struct Table{
 
 int count_args (char** args);
 int add_plan (char** args, Log* log);
-
+int add_plan_str(char** args);
 
 int del_plan (int start, int date, Log* log);
 void show_table (Table* table, Log* log);
@@ -105,6 +105,20 @@ int add_plan (char** args, Log* log){
 		   "       or  type \"help\" for help.\n");
 
 	return -1;
+}
+
+/******************************************************************************
+* Function:         int add_plan_str
+* Arguments:		char** args, Log log
+* Return:           -1 if the added plan is invalid, 1 if it's valid.
+* Error:            none
+
+* Description:      Simply copy the string input to the log file.
+*****************************************************************************/
+int add_plan_str(char** args, Log log){
+	
+
+	return 1;	
 }
 
 /******************************************************************************
