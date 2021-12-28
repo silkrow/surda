@@ -25,7 +25,8 @@
 
 /***********************************PRED**************************************/
 typedef struct Log{
-	char* name;
+	/* plan[day][time]. */
+	char*** plan;
 	FILE* logf;
 } Log;
 
@@ -44,8 +45,7 @@ typedef struct Table{
 } Table;
 
 int count_args (char** args);
-int add_plan (char** args);
-
+int add_plan (char** args, Log* log);
 
 
 int del_plan (int start, int date, Log* log);
@@ -75,33 +75,33 @@ int count_args(char** args){
 
 /******************************************************************************
 * Function:         int add_plan 
-* Arguments:		char** args
+* Arguments:		char** args, Log* log
 * Return:          	1 for legal adding, -1 for illegal adding. 
 * Error:            none
 
 * Description:      Reads in information and add plan to the log file.
 *****************************************************************************/
-int add_plan (char** args){
+int add_plan (char** args, Log* log){
 	
 	switch (count_args(args)){
-		/* time1 time2 string*/
-		case 3:
+		/* time1 time2*/
+		case 2:
 			return 1;
 
-		/* time1 time2 string day*/
-		case 4:
+		/* time1 time2 day*/
+		case 3:
 			return 1;
 
 		default:
 			printf("surda: Invalid syntax for add!\n");
-			printf("       Use add time1 time2 plan [day]\n"
+			printf("       Use add time1 time2 [day]\n"
 		   			"       or  type \"help\" for help.\n");
 
 
 			return -1;
 	}
 	printf("surda: Invalid syntax for add!\n");
-	printf("       Use add time1 time2 plan [day]\n"
+	printf("       Use add time1 time2 [day]\n"
 		   "       or  type \"help\" for help.\n");
 
 	return -1;

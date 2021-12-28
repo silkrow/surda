@@ -283,7 +283,7 @@ int lsh_execute(char **args)
 
 	for (int i = 0; i < log_func_num(); ++i){
 		if (strcmp(args[0], log_str[i]) == 0)
-			return (*log_func[i])(args);
+			return (*log_func[i])(args, log);// log needs to be predefined in somewhere of surda.c or here.
 	}
 
   	return lsh_launch(args);
