@@ -102,8 +102,9 @@ char *lsh_read_line(void){
 
 		c = getchar(); 
 
+		/* By my modification, the input line is at most 1024 characters. */
 		// If hits EOF, replace it with a null character and return.
-		if (c == EOF || c == '\n'){
+		if (position + 1 == bufsize || c == EOF || c == '\n'){
 			buffer[position] = '\0';
 			return buffer;
 		} else {
@@ -112,13 +113,13 @@ char *lsh_read_line(void){
 		position++;
 
 		// Reallocate if input exceeds the buffer.
-		if (position >= bufsize){
-			bufsize += LSH_RL_BUFSIZE;
-			buffer = realloc(buffer, bufsize);
-			if (!buffer){
-				fprintf(stderr, "lsh: allocation error\n");
-				exit(EXIT_FAILURE);
-			}
+		//if (position >= bufsize){
+		//	bufsize += LSH_RL_BUFSIZE;
+		//	buffer = realloc(buffer, bufsize);
+		//	if (!buffer){
+		//		fprintf(stderr, "lsh: allocation error\n");
+		//		exit(EXIT_FAILURE);
+		//	}
 		}
 	}
 }
