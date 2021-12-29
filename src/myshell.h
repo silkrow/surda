@@ -92,17 +92,19 @@ char *lsh_read_line(void){
 	int bufsize = LSH_RL_BUFSIZE;
 	//int position = 0;
 	char *buffer = malloc(sizeof(char) * bufsize);
-	//int c; // getchar() function has int return type.
 
 	if (!buffer){
 		fprintf(stderr, "lsh: allocation error\n");
 		exit(EXIT_FAILURE);
 	}
 
-	fgets(buffer, bufsize, stdin);
-	return buffer;
-	//while(1){
+	if (fgets(buffer, bufsize, stdin)){
+		char *c;
+		if (c = strchr(buffer, '\n')) *c = 0;
+		else while(getchar() != EOF && getchar() != '\n');
+	}
 
+	return buffer;
 		//c = getchar(); 
 
 		
