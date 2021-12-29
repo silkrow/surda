@@ -33,7 +33,7 @@ int lsh_cd(char **args);
 int lsh_help(char **args);
 int lsh_exit(char **args);
 int lsh_execute(char **args);
-
+static Log* log;
 /***********************************IMPL**************************************/
 
 /******************************************************************************
@@ -55,7 +55,6 @@ void lsh_loop(void){
 
 	/* Preprocessing, set the log file to this week! */
 	
-	Log* log;	
 	do{
 		printf("surda:> ");
 		line = lsh_read_line();
@@ -100,33 +99,12 @@ char *lsh_read_line(void){
 
 	if (fgets(buffer, bufsize, stdin)){
 		char *c;
-		if (c = strchr(buffer, '\n')) *c = 0;
+		c = strchr(buffer, '\n');
+		if (c) *c = 0;
 		else while(getchar() != EOF && getchar() != '\n');
 	}
 
 	return buffer;
-		//c = getchar(); 
-
-		
-		// If hits EOF, replace it with a null character and return.
-		//if (c == EOF || c == '\n'){
-		//	buffer[position] = '\0';
-		//	return buffer;
-		//} else {
-		//	buffer[position] = c;
-		//}
-		//position++;
-
-		// Reallocate if input exceeds the buffer.
-		//if (position >= bufsize){
-		//	bufsize += LSH_RL_BUFSIZE;
-		//	buffer = realloc(buffer, bufsize);
-		//	if (!buffer){
-		//		fprintf(stderr, "lsh: allocation error\n");
-		//		exit(EXIT_FAILURE);
-		//	}
-		//}
-	//}
 }
 
 /******************************************************************************
@@ -289,8 +267,6 @@ int log_func_num() {
 /******************************************************************************/
 int lsh_execute(char **args)
 {
-
-	Log* log;	
 	if (args[0] == NULL) {
     	// An empty command was entered.
     	return 1;

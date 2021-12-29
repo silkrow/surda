@@ -76,7 +76,7 @@ int count_args(char** args){
 /******************************************************************************
 * Function:         int add_plan 
 * Arguments:		char** args, Log* log
-* Return:          	1 for legal adding, -1 for illegal adding. 
+* Return:          	1
 * Error:            none
 
 * Description:      Reads in information and add plan to the log file.
@@ -98,13 +98,8 @@ int add_plan (char** args, Log* log){
 		   			"       or  type \"help\" for help.\n");
 
 
-			return -1;
+			return 1;
 	}
-	printf("surda: Invalid syntax for add!\n");
-	printf("       Use add time1 time2 [day]\n"
-		   "       or  type \"help\" for help.\n");
-
-	return -1;
 }
 
 /******************************************************************************
