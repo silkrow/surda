@@ -36,6 +36,7 @@ int lsh_exit(char **args);
 int lsh_execute(char **args);
 static Log* log;
 struct tm *now;
+struct tm *st_week;
 
 /***********************************IMPL**************************************/
 
@@ -57,7 +58,15 @@ void lsh_loop(void){
 
 	time_t t = time(NULL);
   	now = localtime(&t);
+	st_week = localtime(&t);
+
   	printf("%d-%02d-%02d\n\n", now->tm_year + 1900, now->tm_mon + 1, now->tm_mday);
+
+	/* Use st_week to contain the Sunday of beginning of this week. */
+	*st_week = *now;
+	st_week->tm_mday -= now->tm_wday;
+	mktime(st_week);
+	printf("%s\n", asctime(st_week));
 
 	/* Preprocessing, set the log file to this week! */
 	
