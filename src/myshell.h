@@ -50,11 +50,12 @@ int lsh_execute(char **args);
 void lsh_loop(void){
 	char *line;
 	char **args;
-	int status;
+	int status = 1;
+
 
 	/* Preprocessing, set the log file to this week! */
 	
-
+	Log* log;	
 	do{
 		printf("surda:> ");
 		line = lsh_read_line();
@@ -89,28 +90,30 @@ void lsh_loop(void){
 *****************************************************************************/
 char *lsh_read_line(void){
 	int bufsize = LSH_RL_BUFSIZE;
-	int position = 0;
+	//int position = 0;
 	char *buffer = malloc(sizeof(char) * bufsize);
-	int c; // getchar() function has int return type.
+	//int c; // getchar() function has int return type.
 
 	if (!buffer){
 		fprintf(stderr, "lsh: allocation error\n");
 		exit(EXIT_FAILURE);
 	}
 
-	while(1){
+	fgets(buffer, bufsize, stdin);
+	return buffer;
+	//while(1){
 
-		c = getchar(); 
+		//c = getchar(); 
 
-		/* By my modification, the input line is at most 1024 characters. */
+		
 		// If hits EOF, replace it with a null character and return.
-		if (position + 1 == bufsize || c == EOF || c == '\n'){
-			buffer[position] = '\0';
-			return buffer;
-		} else {
-			buffer[position] = c;
-		}
-		position++;
+		//if (c == EOF || c == '\n'){
+		//	buffer[position] = '\0';
+		//	return buffer;
+		//} else {
+		//	buffer[position] = c;
+		//}
+		//position++;
 
 		// Reallocate if input exceeds the buffer.
 		//if (position >= bufsize){
@@ -120,8 +123,8 @@ char *lsh_read_line(void){
 		//		fprintf(stderr, "lsh: allocation error\n");
 		//		exit(EXIT_FAILURE);
 		//	}
-		}
-	}
+		//}
+	//}
 }
 
 /******************************************************************************
@@ -270,7 +273,7 @@ char *log_str[] = {
 	"a"
 };
 
-int (*log_func[]) (char **) = {
+int (*log_func[]) (char **, Log*) = {
   	&add_plan,
   	&add_plan
 };
@@ -285,6 +288,7 @@ int log_func_num() {
 int lsh_execute(char **args)
 {
 
+	Log* log;	
 	if (args[0] == NULL) {
     	// An empty command was entered.
     	return 1;
