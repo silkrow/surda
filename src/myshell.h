@@ -17,6 +17,7 @@
 #include <sys/wait.h>
 #include "log.h"
 #include "printing.h"
+#include "time.h"
 
 #define LSH_RL_BUFSIZE 1024
 #define LSH_TOK_BUFSIZE 64
@@ -34,6 +35,8 @@ int lsh_help(char **args);
 int lsh_exit(char **args);
 int lsh_execute(char **args);
 static Log* log;
+struct tm *now;
+
 /***********************************IMPL**************************************/
 
 /******************************************************************************
@@ -52,6 +55,9 @@ void lsh_loop(void){
 	char **args;
 	int status = 1;
 
+	time_t t = time(NULL);
+  	now = localtime(&t);
+  	printf("%d-%02d-%02d\n\n", now->tm_year + 1900, now->tm_mon + 1, now->tm_mday);
 
 	/* Preprocessing, set the log file to this week! */
 	

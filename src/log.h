@@ -21,7 +21,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#define LOGPATH ".surdalog"
+#define LOGPATH "surdalog"
 
 /***********************************PRED**************************************/
 typedef struct Log{
