@@ -20,9 +20,11 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <time.h>
 
-#define LOGPATH "surdalog/"
+#define LOGPATH "surdalog/log"
 
+extern struct tm* st_week;
 /***********************************PRED**************************************/
 typedef struct Log{
 	/* plan[day][time]. */
@@ -47,6 +49,7 @@ typedef struct Table{
 int count_args (char** args);
 int add_plan (char** args, Log* log);
 int add_plan_str(char** args, Log* log);
+int open_log(char* name, Log* log);
 
 int del_plan (int start, int date, Log* log);
 void show_table (Table* table, Log* log);
@@ -115,6 +118,25 @@ int add_plan_str(char** args, Log* log){
 
 	return 1;	
 }
+
+/******************************************************************************
+* Function:         int open_log
+* Arguments:		char* name, Log* log
+* Return:           1 if success, 0 if the file doesn't exist.
+* Error:            none
+
+* Description:      Try to open the log for the sepcific week.
+*****************************************************************************/
+int open_log(char* name, Log* log){
+	if (NULL == (log->logf = fopen(name, "r"))){
+		printf("You don't have any schedule for week " 
+				"%d-%02d-%02d yet, type \'set\' to get one.\n",
+				st_week->tm_year + 1900, st_week->tm_mon + 1, st_week->tm_mday);
+		return 0;
+	}
+	return 1;
+}
+
 
 /******************************************************************************
 * Function:         int del_plan 

@@ -35,7 +35,7 @@ int lsh_cd(char **args);
 int lsh_help(char **args);
 int lsh_exit(char **args);
 int lsh_execute(char **args);
-static Log* log;
+static Log* log_0;
 struct tm *now;
 struct tm *st_week;
 
@@ -76,13 +76,12 @@ void lsh_loop(void){
 	strcpy(log_file_name, LOGPATH);
 	strcat(log_file_name, week_date);
 	
-	if (NULL == (log = malloc(sizeof(Log)))){
+	if (NULL == (log_0 = malloc(sizeof(Log)))){
 		printf("surda error: Failed in memory allocation.\n");
 		return;
 	}
 
-	if (NULL == (log->logf = fopen(log_file_name, "r")))
-		log->logf = fopen(log_file_name, "w");
+	open_log(log_file_name, log_0);
 
 	/* Main loop of the command line. */
 	do{
@@ -96,7 +95,7 @@ void lsh_loop(void){
 				status = lsh_execute(args);
 				break;
 			case 2:
-				status = add_plan_str(args, log);
+				status = add_plan_str(args, log_0);
 				break;
 			default:
 				break;
@@ -107,7 +106,7 @@ void lsh_loop(void){
 
 	} while (status);
 
-	free(log);
+	free(log_0);
 }
 
 /******************************************************************************
@@ -312,7 +311,7 @@ int lsh_execute(char **args)
 
 	for (int i = 0; i < log_func_num(); ++i){
 		if (strcmp(args[0], log_str[i]) == 0)
-			return (*log_func[i])(args, log);// log needs to be predefined in somewhere of surda.c or here.
+			return (*log_func[i])(args, log_0);// log needs to be predefined in somewhere of surda.c or here.
 	}
 
   	return lsh_launch(args);
