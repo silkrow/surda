@@ -29,6 +29,7 @@ extern struct tm* st_week;
 typedef struct Log{
 	/* plan[day][time]. */
 	//char*** plan;
+	char* name;
 	FILE* logf;
 } Log;
 
@@ -49,7 +50,8 @@ typedef struct Table{
 int count_args (char** args);
 int add_plan (char** args, Log* log);
 int add_plan_str(char** args, Log* log);
-int open_log(char* name, Log* log, int t);
+int open_log(Log* log, int t);
+int set_log(char** args, Log* log);
 
 int del_plan (int start, int date, Log* log);
 void show_table (Table* table, Log* log);
@@ -121,16 +123,16 @@ int add_plan_str(char** args, Log* log){
 
 /******************************************************************************
 * Function:         int open_log
-* Arguments:		char* name, Log* log, int t
+* Arguments:		Log* log, int t
 * Return:           1 if success, 0 if the file doesn't exist.
 * Error:            none
 
-* Description:      Try to open the log with the given name, and match it with
+* Description:      Try to open the log with the name of file, and match it with
 * the log pointer. The int t indicates the type of the log(0 for regular weeks
 * and 1 for templates).
 *****************************************************************************/
-int open_log(char* name, Log* log, int t){
-	if (NULL == (log->logf = fopen(name, "r"))){
+int open_log(Log* log, int t){
+	if (NULL == (log->logf = fopen(log->name, "r"))){
 		if (t == 0)
 			printf("You don't have any schedule for week " 
 				"%d-%02d-%02d yet, type \'set\' to get one.\n",
@@ -141,6 +143,19 @@ int open_log(char* name, Log* log, int t){
 	return 1;
 }
 
+/******************************************************************************
+* Function:         int set_log
+* Arguments:		char** args, Log* log
+* Return:           1
+* Error:            none
+
+* Description:      Initialize a log file.
+*****************************************************************************/
+int set_log(char** args, Log* log){
+	if (NULL == (log->logf = fopen(log->name, "w")))
+		printf("Failed to initialize a table of schedule!\n");
+	return 1;
+}
 
 /******************************************************************************
 * Function:         int del_plan 

@@ -61,8 +61,6 @@ void lsh_loop(void){
   	now = localtime(&t);
 	st_week = localtime(&t);
 
-  	printf("%d-%02d-%02d\n\n", now->tm_year + 1900, now->tm_mon + 1, now->tm_mday);
-
 	/* Use st_week to contain the Sunday of beginning of this week. */
 	*st_week = *now;
 	st_week->tm_mday -= now->tm_wday;
@@ -80,8 +78,12 @@ void lsh_loop(void){
 		printf("surda error: Failed in memory allocation.\n");
 		return;
 	}
+	log_0->name = log_file_name;
 
-	open_log(log_file_name, log_0, 0);
+	/* Before everything, remind the user if there's no log file for this week yet.*/
+	open_log(log_0, 0);
+
+
 
 	/* Main loop of the command line. */
 	do{
@@ -281,12 +283,14 @@ int lsh_exit(char **args)
 
 char *log_str[] = {
   	"add",
-	"a"
+	"a",
+	"set"
 };
 
 int (*log_func[]) (char **, Log*) = {
   	&add_plan,
-  	&add_plan
+  	&add_plan,
+	&set_log
 };
 
 int log_func_num() {
