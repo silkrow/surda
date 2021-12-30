@@ -12,6 +12,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <unistd.h>
 #include <sys/types.h> // For wait(), waitpid().
 #include <sys/wait.h>
@@ -66,10 +67,24 @@ void lsh_loop(void){
 	*st_week = *now;
 	st_week->tm_mday -= now->tm_wday;
 	mktime(st_week);
-	printf("%s\n", asctime(st_week));
 
 	/* Preprocessing, set the log file to this week! */
+	char log_file_name[30]; 
+	char week_date[15];
+
+	strftime(week_date, 14, "%F", st_week);
+	strcpy(log_file_name, LOGPATH);
+	strcat(log_file_name, week_date);
 	
+	if (NULL == (log = malloc(sizeof(Log)))){
+		printf("surda error: Failed in memory allocation.\n");
+		return;
+	}
+
+	if (NULL == (log->logf = fopen(log_file_name, "r")))
+		log->logf = fopen(log_file_name, "w");
+
+	/* Main loop of the command line. */
 	do{
 		printf("surda:> ");
 		line = lsh_read_line();
@@ -91,6 +106,8 @@ void lsh_loop(void){
 		free(args);
 
 	} while (status);
+
+	free(log);
 }
 
 /******************************************************************************

@@ -21,12 +21,12 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#define LOGPATH "surdalog"
+#define LOGPATH "surdalog/"
 
 /***********************************PRED**************************************/
 typedef struct Log{
 	/* plan[day][time]. */
-	char*** plan;
+	//char*** plan;
 	FILE* logf;
 } Log;
 
