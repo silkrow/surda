@@ -81,7 +81,7 @@ void lsh_loop(void){
 		return;
 	}
 
-	open_log(log_file_name, log_0);
+	open_log(log_file_name, log_0, 0);
 
 	/* Main loop of the command line. */
 	do{
