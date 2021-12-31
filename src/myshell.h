@@ -84,7 +84,6 @@ void lsh_loop(void){
 	open_log(log_0, 0);
 
 
-
 	/* Main loop of the command line. */
 	do{
 		printf("surda:> ");
