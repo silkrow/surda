@@ -80,9 +80,10 @@ void lsh_loop(void){
 	}
 	log_0->name = log_file_name;
 	log_0->open = 0;
+	log_0->t = 0;
 
 	/* Before everything, remind the user if there's no log file for this week yet.*/
-	touch_log(log_0, 0);
+	touch_log(log_0);
 
 
 	/* Main loop of the command line. */
@@ -108,7 +109,8 @@ void lsh_loop(void){
 
 	} while (status);
 
-
+	if (!log_0->name) free(log_0->name);
+	if (!log_0->logf) free(log_0->logf);
 	free(log_0);
 }
 

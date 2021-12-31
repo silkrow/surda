@@ -33,6 +33,7 @@ typedef struct Log{
 	int open;
 	char* name;
 	FILE* logf;
+	int t; //  Indicating which type this log is.
 } Log;
 
 /* The Table structure should contain a file of txt form to display the table,
@@ -52,9 +53,10 @@ typedef struct Table{
 int count_args (char** args);
 int add_plan (char** args, Log* log);
 int add_plan_str(char** args, Log* log);
-int touch_log(Log* log, int t);
+int touch_log(Log* log);
 int set_log(char** args, Log* log);
 int time_convert(char* s, int day);
+int jump_line(FILE* file, int line);
 
 
 int del_plan (int start, int date, Log* log);
@@ -90,22 +92,52 @@ int count_args(char** args){
 * Description:      Reads in information and add plan to the log file.
 *****************************************************************************/
 int add_plan (char** args, Log* log){
-	int start;
-	int duration;
+	int start, end, duration;
 	int day;
+
+	if (!touch_log(log)) return 1;
 
 	switch (count_args(args)){
 		/* time1 time2*/
 		case 3:
-			day = now->tm_wday;			
+			day = now->tm_wday;
 			if (time_convert(args[1], day) == -1 || time_convert(args[2], day) == -1 ||
-					time_convert(args[1], day) >= time_convert(args[2], day)){
+					(start = time_convert(args[1], day)) >= (end = time_convert(args[2], day))){
 				printf("surda: Invalid syntax for add!\n"
 					   "       Use add time1 time2 [day]\n"
 					   "       where time should be in format of 24h, with preceding 0 for hours < 10.\n"
 					   "       day should be a number of 0-6, 0 for Sunday.\n"
 					   "       example:     add 08:00 24:00 4\n"
 					   "       Type \"help\" for help.\n");
+			}
+			else{
+				duration = end - start;
+				log->logf = fopen(log->name, "r+");
+				fseek(log->logf, 0, SEEK_SET);// Preset the pointer in the file.
+				
+				/* Now set the pointer in the file to the start line. */
+				if (!jump_line(log->logf, start)){
+					printf("surda: Adding failed, something's wrong with your log file!!\n");
+					fclose(log->logf);
+					return 1;
+				}
+				else{
+					for (int i = 0; i < duration; ++i){
+						if (fgetc(log->logf) != '0'){
+							printf("There're already plans in the period!\n");
+							fclose(log->logf);
+							return 1;
+						}
+						jump_line(log->logf, 1);
+					}
+					
+					fputs("here i am!!!", log->logf);
+
+					/* Now it's checked to be fine. */
+					printf("Please now enter the plan script, hit enter only when finished!\n");				
+					fclose(log->logf);
+					return 2;
+				}
 			}
 			return 1;
 
@@ -140,21 +172,20 @@ int add_plan_str(char** args, Log* log){
 
 /******************************************************************************
 * Function:         int touch_log
-* Arguments:		Log* log, int t
+* Arguments:		Log* log
 * Return:           1 if success, 0 if the file doesn't exist.
 * Error:            none
 
 * Description:      Try to open the log with the name of file, and match it with
-* the log pointer. The int t indicates the type of the log(0 for regular weeks
-* and 1 for templates).
+* the log pointer.
 *****************************************************************************/
-int touch_log(Log* log, int t){
+int touch_log(Log* log){
 	if (NULL == (log->logf = fopen(log->name, "r"))){
-		if (t == 0)
+		if (log->t == 0)
 			printf("You don't have any schedule for week " 
 				"%d-%02d-%02d yet, type \'set\' to get one.\n",
 				st_week->tm_year + 1900, st_week->tm_mon + 1, st_week->tm_mday);
-		else if(t == 1);
+		else if(log->t == 1);
 		return 0;
 	} else fclose(log->logf);
 
@@ -212,6 +243,25 @@ int time_convert(char* s, int day){
 
 	return n;
 }
+
+/******************************************************************************
+* Function:         int jump_line
+* Arguments:		FILE* file, int line
+* Return:           1 if success, 0 if failed.
+* Error:            none
+
+* Description:      This function set the pointer in FILE* file to the next 
+* 'line' line by stepping through lines with fgets().
+*****************************************************************************/
+int jump_line(FILE* file, int line){
+	char s[1024];
+	for (int i = 0; i < line; ++i)
+		if (!fgets(s, 1024, file)) return 0;
+
+	return 1;	
+}
+
+
 
 
 /******************************************************************************
