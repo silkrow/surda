@@ -79,9 +79,10 @@ void lsh_loop(void){
 		return;
 	}
 	log_0->name = log_file_name;
+	log_0->open = 0;
 
 	/* Before everything, remind the user if there's no log file for this week yet.*/
-	open_log(log_0, 0);
+	touch_log(log_0, 0);
 
 
 	/* Main loop of the command line. */

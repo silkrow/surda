@@ -29,6 +29,7 @@ extern struct tm* st_week;
 typedef struct Log{
 	/* plan[day][time]. */
 	//char*** plan;
+	int open;
 	char* name;
 	FILE* logf;
 } Log;
@@ -50,7 +51,7 @@ typedef struct Table{
 int count_args (char** args);
 int add_plan (char** args, Log* log);
 int add_plan_str(char** args, Log* log);
-int open_log(Log* log, int t);
+int touch_log(Log* log, int t);
 int set_log(char** args, Log* log);
 
 int del_plan (int start, int date, Log* log);
@@ -122,7 +123,7 @@ int add_plan_str(char** args, Log* log){
 }
 
 /******************************************************************************
-* Function:         int open_log
+* Function:         int touch_log
 * Arguments:		Log* log, int t
 * Return:           1 if success, 0 if the file doesn't exist.
 * Error:            none
@@ -131,7 +132,7 @@ int add_plan_str(char** args, Log* log){
 * the log pointer. The int t indicates the type of the log(0 for regular weeks
 * and 1 for templates).
 *****************************************************************************/
-int open_log(Log* log, int t){
+int touch_log(Log* log, int t){
 	if (NULL == (log->logf = fopen(log->name, "r"))){
 		if (t == 0)
 			printf("You don't have any schedule for week " 
@@ -139,7 +140,8 @@ int open_log(Log* log, int t){
 				st_week->tm_year + 1900, st_week->tm_mon + 1, st_week->tm_mday);
 		else if(t == 1);
 		return 0;
-	}
+	} else fclose(log->logf);
+
 	return 1;
 }
 
@@ -152,8 +154,16 @@ int open_log(Log* log, int t){
 * Description:      Initialize a log file.
 *****************************************************************************/
 int set_log(char** args, Log* log){
-	if (NULL == (log->logf = fopen(log->name, "w")))
+	if (NULL == (log->logf = fopen(log->name, "w"))){
 		printf("Failed to initialize a table of schedule!\n");
+		return 1;
+	}
+	else{
+		for (int i = 0; i < 1512; ++i)
+			fputs("0\n", log->logf);
+	}
+	fclose(log->logf);
+
 	return 1;
 }
 
