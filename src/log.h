@@ -25,6 +25,7 @@
 #define LOGPATH "surdalog/log"
 
 extern struct tm* st_week;
+extern struct tm* now;
 /***********************************PRED**************************************/
 typedef struct Log{
 	/* plan[day][time]. */
@@ -53,6 +54,8 @@ int add_plan (char** args, Log* log);
 int add_plan_str(char** args, Log* log);
 int touch_log(Log* log, int t);
 int set_log(char** args, Log* log);
+int time_convert(char* s, int day);
+
 
 int del_plan (int start, int date, Log* log);
 void show_table (Table* table, Log* log);
@@ -73,7 +76,6 @@ int mod_load (Table*, Table*);
 int count_args(char** args){
 	int n = 0;
 
-	/* Start testing from args[1], assuming args[0] is not interested. */
 	while (args[++n] != NULL);
 
 	return n;
@@ -88,22 +90,36 @@ int count_args(char** args){
 * Description:      Reads in information and add plan to the log file.
 *****************************************************************************/
 int add_plan (char** args, Log* log){
-	
+	int start;
+	int duration;
+	int day;
+
 	switch (count_args(args)){
 		/* time1 time2*/
-		case 2:
+		case 3:
+			day = now->tm_wday;			
+			if (time_convert(args[1], day) == -1 || time_convert(args[2], day) == -1 ||
+					time_convert(args[1], day) >= time_convert(args[2], day)){
+				printf("surda: Invalid syntax for add!\n"
+					   "       Use add time1 time2 [day]\n"
+					   "       where time should be in format of 24h, with preceding 0 for hours < 10.\n"
+					   "       day should be a number of 0-6, 0 for Sunday.\n"
+					   "       example:     add 08:00 24:00 4\n"
+					   "       Type \"help\" for help.\n");
+			}
 			return 1;
 
 		/* time1 time2 day*/
-		case 3:
+		case 4:
 			return 1;
 
 		default:
-			printf("surda: Invalid syntax for add!\n");
-			printf("       Use add time1 time2 [day]\n"
-		   			"       or  type \"help\" for help.\n");
-
-
+			printf("surda: Invalid syntax for add!\n"
+				   "       Use add time1 time2 [day]\n"
+				   "       where time should be in format of 24h, with preceding 0 for hours < 10.\n"
+				   "       day should be a number of 0-6, 0 for Sunday.\n"
+				   "       example:     add 08:00 24:00 4\n"
+				   "       Type \"help\" for help.\n");
 			return 1;
 	}
 }
@@ -166,6 +182,37 @@ int set_log(char** args, Log* log){
 
 	return 1;
 }
+
+/******************************************************************************
+* Function:         int time_convert
+* Arguments:		char* s, int day
+* Return:           The line number of that time stamp, -1 if invalid.
+* Error:            none
+
+* Description:      
+*****************************************************************************/
+int time_convert(char* s, int day){
+	int n = 0;
+
+	if (*s > '2' || *s < '0' || *(s + 1) < '0' || *(s + 1) > '9' || *(s + 2) != ':' ||
+			*(s + 3) > '5' || *(s + 3) < '0' || (*(s + 4) != '0' && *(s + 4) != '5')) 
+		return -1;
+	else{
+		n += (*s - '0')*10;
+		n += (*(s + 1) - '0');
+		if (n > 24 || n < 6) return -1;
+		n = n*60;
+		n += (*(s + 3) - '0')*10;
+		n += (*(s + 4) - '0');
+
+		if (n > 24*60) return -1;
+	}
+	n = (n - 6*60)/5;
+	n = n + day*18*60/5;
+
+	return n;
+}
+
 
 /******************************************************************************
 * Function:         int del_plan 

@@ -59,7 +59,7 @@ void lsh_loop(void){
 
 	time_t t = time(NULL);
   	now = localtime(&t);
-	st_week = localtime(&t);
+	st_week = malloc(sizeof(struct tm));
 
 	/* Use st_week to contain the Sunday of beginning of this week. */
 	*st_week = *now;
@@ -107,6 +107,7 @@ void lsh_loop(void){
 		free(args);
 
 	} while (status);
+
 
 	free(log_0);
 }
