@@ -225,7 +225,7 @@ int add_plan_str(char* sline, Log* log){
 	}
 	fclose(log->logf);
 
-	sprintf(temp, "%d ", log->duration);
+	sprintf(temp, "%d ", 1);
 	strcat(temp, sline);
 
 	/* First delete the 'start' line. And plug in the string. */
@@ -233,9 +233,9 @@ int add_plan_str(char* sline, Log* log){
 		return 1;
 
 	/* Here handle the following lines. */ 
-	for (int i = log->duration - 1; i > 0; --i){
-		sprintf(temp, "%d", i);
-		if (!replace_line(log, temp, log->end - i))
+	for (int i = 1; i < log->duration; ++i){
+		sprintf(temp, "%d", i + 1);
+		if (!replace_line(log, temp, log->start + i))
 			return 1;
 	}
 
@@ -404,7 +404,8 @@ int replace_line(Log* log, char* sline, int line){
 int del_plan(char** args, Log* log){
 	int n_args = count_args(args);
 	int day;
-	int duration;
+	int int1 = 0, int2, start;
+	char temp[1024];
 
 	switch (n_args){
 		case 2:
@@ -432,11 +433,26 @@ int del_plan(char** args, Log* log){
 					return 1;
 				}
 
-				fscanf(log->logf, "%d", &duration);
+				fscanf(log->logf, "%d", &int2); // get the number of the 'start line'.
+				start = int2;
+
+				while(int1 < int2){
+					if (NULL == fgets(temp, 1024, log->logf))
+						break;
+					int1 = int2;
+					fscanf(log->logf, "%d", &int2); 
+				}
+
+				/* End the above period of counting duration. */
 				fclose(log->logf);
 
-				for (int i = 0; i < duration; ++i){
-					if (!replace_line(log, "0", log->start + i))
+				if (start == 0){
+					printf("surda: Nothing to delete!\n");
+					return 1;
+				}
+
+				for (int i = start; i <= int1; ++i){
+					if (!replace_line(log, "0", log->start + i - start))
 						return 1;
 				}
 
@@ -468,14 +484,28 @@ int del_plan(char** args, Log* log){
 					return 1;
 				}
 
-				fscanf(log->logf, "%d", &duration);
-				fclose(log->logf);
+				fscanf(log->logf, "%d", &int2); // get the number of the 'start line'.
+				start = int2;
 
-				for (int i = 0; i < duration; ++i){
-					if (!replace_line(log, "0", log->start + i))
-						return 1;
+				while(int1 < int2){
+					if (NULL == fgets(temp, 1024, log->logf))
+						break;
+					int1 = int2;
+					fscanf(log->logf, "%d", &int2); 
 				}
 
+				/* End the above period of counting duration. */
+				fclose(log->logf);
+
+				if (start == 0){
+					printf("surda: Nothing to delete!\n");
+					return 1;
+				}
+
+				for (int i = start; i <= int1; ++i){
+					if (!replace_line(log, "0", log->start + i - start))
+						return 1;
+				}
 			}	
 
 			return 1;
