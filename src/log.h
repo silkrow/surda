@@ -333,6 +333,8 @@ int time_convert(char* s, int day){
 *****************************************************************************/
 int jump_line(FILE* file, int line){
 	char s[1024];
+
+	memset(s, 0, 1024);
 	for (int i = 0; i < line; ++i)
 		if (!fgets(s, 1024, file)) return 0;
 
@@ -352,6 +354,7 @@ int replace_line(Log* log, char* sline, int line){
 	char read[1024];
 
 	memset(temp, 0, 1512*1024);
+	memset(read, 0, 1024);
 
 	if (NULL == (log->logf = fopen(log->name, "r"))){
 		printf("surda: Adding failed because of log file missing!\n");
