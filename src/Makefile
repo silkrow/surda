@@ -2,7 +2,7 @@ CC := gcc
 CFLAGS :=-Wall -g
 LDFLAGS := -g
 HEADERS := surda.h myshell.h log.h printing.h Makefile 
-EXE := surda.exe
+EXE := surda
 SOURCES := surda.o
 
 .ALL: ${EXE}
