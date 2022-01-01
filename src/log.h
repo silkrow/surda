@@ -444,7 +444,40 @@ int del_plan(char** args, Log* log){
 
 			return 1;
 		case 3:
-			
+			day = *args[2] - '0';
+			if (day < 0 || day > 6 || (log->start = time_convert(args[1], day)) == -1){
+				printf("surda: Invalid syntax for delete!\n"
+					   "       Use del time1 [day]\n"
+					   "       where time should be in format of 24h, with preceding 0 for hours < 10.\n"
+					   "       day should be a number of 0-6, 0 for Sunday.\n"
+					   "       example:     del 08:00 4\n"
+					   "       Type \"help\" for help.\n");
+			}
+			else{
+				if (NULL == (log->logf = fopen(log->name, "r"))){
+					printf("surda: Deleting failed, please check if the log file exists.\n");
+					return 1;
+				}
+
+				fseek(log->logf, 0, SEEK_SET);// Preset the pointer in the file.
+				
+				/* Now set the pointer in the file to the start line. */
+				if (!jump_line(log->logf, log->start)){
+					printf("surda: Deleting failed, something's wrong with your log file!!\n");
+					fclose(log->logf);
+					return 1;
+				}
+
+				fscanf(log->logf, "%d", &duration);
+				fclose(log->logf);
+
+				for (int i = 0; i < duration; ++i){
+					if (!replace_line(log, "0", log->start + i))
+						return 1;
+				}
+
+			}	
+
 			return 1;
 		default:
 			printf("surda: Invalid syntax for delete!\n"
