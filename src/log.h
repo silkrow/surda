@@ -56,12 +56,12 @@ typedef struct Table{
 
 int count_args (char** args);
 int add_plan (char** args, Log* log);
-int add_plan_str(char** args, Log* log);
+int add_plan_str(char* sline, Log* log);
 int touch_log(Log* log);
 int set_log(char** args, Log* log);
 int time_convert(char* s, int day);
 int jump_line(FILE* file, int line);
-
+int replace_line(Log* log, char* sline, int line);
 
 int del_plan (int start, int date, Log* log);
 void show_table (Table* table, Log* log);
@@ -212,25 +212,35 @@ int add_plan (char** args, Log* log){
 
 /******************************************************************************
 * Function:         int add_plan_str
-* Arguments:		char** args, Log* log
-* Return:           -1 if the added plan is invalid, 1 if it's valid.
+* Arguments:		char* sline, Log* log
+* Return:           2 if the added plan is invalid, 1 if it's valid.
 * Error:            none
 
 * Description:      Simply copy the string input to the log file.
 *****************************************************************************/
-int add_plan_str(char** args, Log* log){
+int add_plan_str(char* sline, Log* log){
 	/* Warning, here it's assumed that the log file is opened during add_plan,
 	 * and the file pointer should be at the specific place where plan should
 	 * be plugged in. */
-	if (NULL == (log->logf = fopen(log->name, "r+"))){
+	char temp[1030];
+
+	if (NULL == (log->logf = fopen(log->name, "r"))){
 		printf("surda: Adding failed, please check if the log file exists.\n");
 		return 1;
 	}
+	fclose(log->logf);
 
+	sprintf(temp, "%d ", log->duration);
+	strcat(temp, sline);
+
+	/* First delete the 'start' line. And plug in the string. */
+	if (!replace_line(log, temp, log->start))
+		return 1;
+
+	/* Here handle the following lines. */ 
 	for (int i = 0; i < log->duration - 1; ++i){
 	}
 
-	fclose(log->logf);
 	return 1;	
 }
 
@@ -315,7 +325,8 @@ int time_convert(char* s, int day){
 * Error:            none
 
 * Description:      This function set the pointer in FILE* file to the next 
-* 'line' line by stepping through lines with fgets().
+* 'line' line by stepping through lines with fgets(). This function is passed
+* with a opened state of file!
 *****************************************************************************/
 int jump_line(FILE* file, int line){
 	char s[1024];
@@ -325,8 +336,56 @@ int jump_line(FILE* file, int line){
 	return 1;	
 }
 
+/******************************************************************************
+* Function:         int replace_line
+* Arguments:		Log* log, char* sline, int line
+* Return:           1 if success, 0 if failed
+* Error:            none
 
+* Description:      Use an awkward approach to delete a line from the log file. 
+*****************************************************************************/
+int replace_line(Log* log, char* sline, int line){
+	char temp[1512*1024];
+	char read[1024];
 
+	if (NULL == (log->logf = fopen(log->name, "r"))){
+		printf("surda: Adding failed because of log file missing!\n");
+		return 0;
+	}
+	for (int i = 0; i < line; ++i){
+		if (!fgets(read, 1024, log->logf)){ 
+			printf("surda: Adding failed.\n");
+			fclose(log->logf);
+			return 0;
+		}
+		else strcat(temp, read);
+	}
+	if (!fgets(read, 1024, log->logf)){ 
+			printf("surda: Adding failed.\n");
+			fclose(log->logf);
+			return 0;
+		}
+	strcat(temp, sline);
+	strcat(temp, "\n");
+
+	for (int i = line + 1; i < 1512; ++i){
+		if (!fgets(read, 1024, log->logf)){ 
+			printf("surda: Adding failed.\n");
+			fclose(log->logf);
+			return 0;
+		}
+		else strcat(temp, read);
+	}
+
+	fclose(log->logf);
+
+	log->logf = fopen(log->name, "w");
+	
+	fputs(temp, log->logf);
+	fclose(log->logf);
+
+	return 1;
+}
 
 /******************************************************************************
 * Function:         int del_plan 

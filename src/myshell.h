@@ -88,9 +88,12 @@ void lsh_loop(void){
 
 	/* Main loop of the command line. */
 	do{
+		char line2[1024];
 		printf("surda:> ");
 		line = lsh_read_line();
+		strcpy(line2, line);
 		args = lsh_split_line(line);
+
 		/* If status is 1, then keep on asking for new commands,
 		 * if status is 2, read the text of plan. */
 		switch (status){
@@ -98,7 +101,7 @@ void lsh_loop(void){
 				status = lsh_execute(args);
 				break;
 			case 2:
-				status = add_plan_str(args, log_0);
+				status = add_plan_str(line2, log_0);
 				break;
 			default:
 				break;
