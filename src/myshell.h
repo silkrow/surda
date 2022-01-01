@@ -290,13 +290,17 @@ int lsh_exit(char **args)
 char *log_str[] = {
   	"add",
 	"a",
-	"set"
+	"set",
+	"del",
+	"d"
 };
 
 int (*log_func[]) (char **, Log*) = {
   	&add_plan,
   	&add_plan,
-	&set_log
+	&set_log,
+	&del_plan,
+	&del_plan
 };
 
 int log_func_num() {

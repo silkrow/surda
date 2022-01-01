@@ -62,12 +62,7 @@ int set_log(char** args, Log* log);
 int time_convert(char* s, int day);
 int jump_line(FILE* file, int line);
 int replace_line(Log* log, char* sline, int line);
-
-int del_plan (int start, int date, Log* log);
-void show_table (Table* table, Log* log);
-void log_update (Log* log);
-void log_store (Table*, Table*);
-int mod_load (Table*, Table*);
+int del_plan (char** args, Log* log);
 
 /***********************************IMPL**************************************/
 
@@ -398,66 +393,68 @@ int replace_line(Log* log, char* sline, int line){
 }
 
 /******************************************************************************
-* Function:         int del_plan 
-* Arguments:		int start, int date, Log* log
-* Return:          	Whether the deleting is legal. 
+* Function:         int del_plan
+* Arguments:		char** args, Log* log
+* Return:           1
 * Error:            none
 
-* Description:      Add a deleting record in the log file.
+* Description:      Check if there's any plan in the position, and replace them
+* with 'empty' entrys in the log file.
 *****************************************************************************/
-int del_plan (int start, int date, Log* log){
-	
-}
+int del_plan(char** args, Log* log){
+	int n_args = count_args(args);
+	int day;
+	int duration;
 
-/******************************************************************************
-* Function:         void show_table 
-* Arguments:		Table* table, Log* log
-* Return:           none
-* Error:            none
+	switch (n_args){
+		case 2:
+			day = now->tm_wday;
+			if ((log->start = time_convert(args[1], day)) == -1){
+				printf("surda: Invalid syntax for delete!\n"
+					   "       Use del time1 [day]\n"
+					   "       where time should be in format of 24h, with preceding 0 for hours < 10.\n"
+					   "       day should be a number of 0-6, 0 for Sunday.\n"
+					   "       example:     del 08:00 4\n"
+					   "       Type \"help\" for help.\n");
+			}
+			else{
+				if (NULL == (log->logf = fopen(log->name, "r"))){
+					printf("surda: Deleting failed, please check if the log file exists.\n");
+					return 1;
+				}
 
-* Description:      A function to display the table file in the shell.
-*****************************************************************************/
-void show_table (Table* table, Log* log){
-	
-}
+				fseek(log->logf, 0, SEEK_SET);// Preset the pointer in the file.
+				
+				/* Now set the pointer in the file to the start line. */
+				if (!jump_line(log->logf, log->start)){
+					printf("surda: Deleting failed, something's wrong with your log file!!\n");
+					fclose(log->logf);
+					return 1;
+				}
 
-/******************************************************************************
-* Function:         void log_update
-* Arguments:		Log* log 
-* Return:           none
-* Error:            none
+				fscanf(log->logf, "%d", &duration);
+				fclose(log->logf);
 
-* Description:      A function that rewrites the log file by calculating all 
-* the records up to now, and leave it with only adding instructions.
-*****************************************************************************/
-void log_update(Log* log){
-	
-}
+				for (int i = 0; i < duration; ++i){
+					if (!replace_line(log, "0", log->start + i))
+						return 1;
+				}
 
-/******************************************************************************
-* Function:         void log_store
-* Arguments:		Table* mod, Table* table 
-* Return:           none
-* Error:            none
+			}	
 
-* Description:      A function that stores a table of plans as a module, which 
-* can be used in the future conveniently.
-*****************************************************************************/
-void log_store(Table* mod, Table* table){
-	
-}
+			return 1;
+		case 3:
+			
+			return 1;
+		default:
+			printf("surda: Invalid syntax for delete!\n"
+				   "       Use del time1 [day]\n"
+			       "       where time should be in format of 24h, with preceding 0 for hours < 10.\n"
+				   "       day should be a number of 0-6, 0 for Sunday.\n"
+				   "       example:     del 08:00 4\n"
+				   "       Type \"help\" for help.\n");
+			return 1;
+	}
 
-/******************************************************************************
-* Function:         int mod_load
-* Arguments:		Table* mod, Table* table
-* Return:           Whether there're conflicts when loading the module.
-* Error:            none
-
-* Description:      Attempts to load a module of schedule from some pre-stored
-* modules to the log file this week. 
-*
-* further feature:	Feed back the conflicting elements(or the time period).
-*****************************************************************************/
-int mod_load(Table* mod, Table* table){
-	
+	return 1;
 }
