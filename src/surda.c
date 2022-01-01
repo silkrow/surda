@@ -43,7 +43,10 @@ int main(int argc, char* argv[]){
 	slogo[fileLen - 1] = 0; 
 
 	printf("%s\n", slogo);
+	
+	free(slogo);
 	lsh_loop();
+
 
 	return EXIT_SUCCESS;
 }

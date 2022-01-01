@@ -238,7 +238,10 @@ int add_plan_str(char* sline, Log* log){
 		return 1;
 
 	/* Here handle the following lines. */ 
-	for (int i = 0; i < log->duration - 1; ++i){
+	for (int i = log->duration - 1; i > 0; --i){
+		sprintf(temp, "%d", i);
+		if (!replace_line(log, temp, log->end - i))
+			return 1;
 	}
 
 	return 1;	
@@ -348,10 +351,14 @@ int replace_line(Log* log, char* sline, int line){
 	char temp[1512*1024];
 	char read[1024];
 
+	memset(temp, 0, 1512*1024);
+
 	if (NULL == (log->logf = fopen(log->name, "r"))){
 		printf("surda: Adding failed because of log file missing!\n");
 		return 0;
 	}
+	fseek(log->logf, 0, SEEK_SET);
+
 	for (int i = 0; i < line; ++i){
 		if (!fgets(read, 1024, log->logf)){ 
 			printf("surda: Adding failed.\n");
@@ -380,7 +387,7 @@ int replace_line(Log* log, char* sline, int line){
 	fclose(log->logf);
 
 	log->logf = fopen(log->name, "w");
-	
+
 	fputs(temp, log->logf);
 	fclose(log->logf);
 

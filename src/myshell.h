@@ -274,7 +274,7 @@ int lsh_help(char **args)
 	shelp[fileLen - 1] = 0;
 
 	printf("%s\n", shelp);
-
+	free(shelp);
  	return 1;
 }
 
